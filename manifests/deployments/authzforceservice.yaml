@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: authzforceservice
+    namespace: scheduled
+    labels:
+        app: authzforce
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: authzforce
+    template:
+        metadata:
+            labels:
+                app: authzforce
+        spec:
+            containers:
+                - name: authzforce
+                  image: fiware/authzforce-ce-server:release-8.1.0
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 8080
+                      protocol: TCP
+
+                  volumeMounts: 
+                    - mountPath: /opt/authzforce-ce-server/data/domains
+                      name: authzforce-volume
+                      subPath: authzforce
+                  resources:
+                    requests:
+                      cpu: 10m
+                      memory: 500Mi
+                    limits:
+                      cpu: 200m
+                      memory: 1000Mi
+            volumes:
+                - name: authzforce-volume
+                  persistentVolumeClaim:
+                    claimName: authzforce-volume-claim

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orionservice
+  namespace: scheduled
+spec:
+  selector:
+    app: orion
+  clusterIP: 10.48.0.8
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 1026
+    targetPort: 1026
+    nodePort: 32001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orionserviceproxy
+  namespace: scheduled
+spec:
+  selector:
+    app: orionproxy
+  clusterIP: 10.48.0.9
+  ports:
+  - protocol: TCP
+    port: 1027
+    targetPort: 1027

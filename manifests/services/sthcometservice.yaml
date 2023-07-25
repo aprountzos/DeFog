@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sthcometservice
+  namespace: scheduled
+spec:
+  selector:
+    app: comet
+  clusterIP: 10.48.0.13
+  ports:
+  - protocol: TCP
+    port: 8666
+    targetPort: 8666
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sthcometserviceproxy
+  namespace: scheduled
+spec:
+  selector:
+    app: sthcometproxy
+  clusterIP: 10.48.0.14
+  ports:
+  - protocol: TCP
+    port: 8667
+    targetPort: 8667

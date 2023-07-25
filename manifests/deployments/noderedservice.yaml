@@ -1,0 +1,158 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: noderedservice
+    namespace: scheduled
+    labels:
+        app: mysql
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: nodered
+    template:
+        metadata:
+            labels:
+                app: nodered
+        spec:
+            containers:
+                - name: node-red
+                  image: nodered/node-red:latest
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 1880
+                  env:
+                    - name: TZ
+                      valueFrom:
+                        secretKeyRef: 
+                            name: nodered-secret
+                            key: tz
+                  volumeMounts:
+                    - name: nodered-volume
+                      mountPath: /data
+                      subPath: nodered
+                  resources:
+                    requests:
+                      cpu: 10m
+                      memory: 100Mi
+                    limits:
+                      cpu: 200m
+                      memory: 300Mi
+
+            volumes:
+              - name: nodered-volume
+                persistentVolumeClaim:
+                  claimName: nodered-volume-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: noderedserviceproxy
+    namespace: scheduled
+    labels:
+        app: noderedproxy
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: noderedproxy
+    template:
+        metadata:
+            labels:
+                app: noderedproxy
+        spec:
+            containers:
+                - name: nodered-propy
+                  image: fiware/pep-proxy:7.5.0
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 1881
+                      protocol: TCP
+                  env:
+                    - name: PEP_PROXY_APP_HOST
+                      valueFrom:
+                        secretKeyRef: 
+                            name: noderedproxy-secret
+                            key: app_host
+                    - name: PEP_PROXY_APP_PORT
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: app_port
+                    - name: PEP_PROXY_PORT
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: port
+                    - name: PEP_PROXY_IDM_HOST
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: idm_host
+                    - name: PEP_PROXY_HTTPS_ENABLED
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: https_enables
+                    - name: PEP_PROXY_AUTH_ENABLED
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: auth_enabled
+                    - name: PEP_PROXY_IDM_SSL_ENABLED
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: idm_ssl_enabled
+                    - name: PEP_PROXY_IDM_PORT
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: idm_port
+                    - name: PEP_PROXY_APP_ID
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: app_id
+                    - name: PEP_PROXY_USERNAME
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: username
+                    - name: PEP_PASSWORD
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: password
+                    - name: PEP_PROXY_PDP
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: pdp_host
+                    - name: PEP_PROXY_MAGIC_KEY
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: magic_key
+                    - name: PEP_PROXY_AZF_PROTOCOL
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: azf_protocol
+                    - name: PEP_PROXY_AZF_HOST
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: azf_host
+                    - name: PEP_PROXY_AZF_PORT
+                      valueFrom:
+                        secretKeyRef: 
+                          name: noderedproxy-secret
+                          key: azf_port
+                  resources:
+                    requests:
+                      cpu: 10m
+                      memory: 100Mi
+                    limits:
+                      cpu: 100m
+                      memory: 200Mi

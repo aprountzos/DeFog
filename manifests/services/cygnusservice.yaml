@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cygnusservice
+  namespace: scheduled
+spec:
+  selector:
+    app: cygnus
+  clusterIP: 10.48.0.11
+  ports:
+  - protocol: TCP
+    name: serviceport
+    port: 5051
+    targetPort: 5051
+  - protocol: TCP
+    name: apiport
+    port: 5080
+    targetPort: 5080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cygnusserviceproxy
+  namespace: scheduled
+spec:
+  selector:
+    app: cygnusproxy
+  clusterIP: 10.48.0.12
+  ports:
+  - protocol: TCP
+    port: 5052
+    targetPort: 5052

@@ -1,0 +1,10 @@
+apiVersion: split.smi-spec.io/v1alpha2
+kind: TrafficSplit
+metadata:
+  namespace: boutique
+  name: currency-ts
+spec:
+  service: currencyservice
+  backends:
+    - service: currencyservice-cloud
+      weight: 1

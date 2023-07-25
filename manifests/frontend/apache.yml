@@ -1,0 +1,49 @@
+#You have to build the Dockerfile and upload the image on your personal Dockerhub Repository
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: apache
+    namespace: scheduled
+    labels:
+        app: apache
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: apache
+    template:
+        metadata:
+            labels:
+                app: apache
+        spec:
+            containers:
+                - name: www
+                  image: ktsakos/ixenfinal_www:latest
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - containerPort: 80
+                      protocol: TCP
+
+                  volumeMounts: 
+                    - mountPath: /var/www/html
+                      name: apache-volume
+            volumes:
+                - name: apache-volume
+                  persistentVolumeClaim:
+                    claimName: apache-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apacheservice
+  namespace: scheduled
+spec:
+  type: NodePort
+  selector:
+    app: apache
+  clusterIP: 10.48.0.17
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 32000

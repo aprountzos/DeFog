@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: queryingsensorsservice
+  namespace: scheduled
+spec:
+  selector:
+    app: queryingsensors
+  clusterIP: 10.48.0.15
+  ports:
+  - protocol: TCP
+    port: 1024
+    targetPort: 1024
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: queryingsensorsserviceproxy
+  namespace: scheduled
+spec:
+  selector:
+    app: queryingsensorsproxy
+  clusterIP: 10.48.0.16
+  ports:
+  - protocol: TCP
+    port: 1025
+    targetPort: 1025
