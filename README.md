@@ -2,6 +2,7 @@
 DeFog: Dynamic Micro-Service Placement in Hybrid Cloud-Fog-Edge Infrastructures
 
 This application was created for my Thesis, at School of Electrical and Computer Engineering of Technical University of Crete.
+### Link to thesis: https://dias.library.tuc.gr/view/96617
 
 ## Abstract
 
